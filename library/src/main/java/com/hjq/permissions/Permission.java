@@ -8,6 +8,7 @@ import android.Manifest;
  *    time   : 2018/06/15
  *    desc   : 权限请求实体类，参考 {@link Manifest.permission}
  *    doc    : https://developer.android.google.cn/reference/android/Manifest.permission?hl=zh_cn
+ *             https://developer.android.google.cn/guide/topics/permissions/overview?hl=zh-cn#normal-dangerous
  */
 public final class Permission {
 
@@ -16,10 +17,10 @@ public final class Permission {
     /** 外部存储权限（特殊权限，需要 Android 11 及以上） */
     public static final String MANAGE_EXTERNAL_STORAGE = "android.permission.MANAGE_EXTERNAL_STORAGE";
 
-    /** 应用安装权限（特殊权限，需要 Android 8.0 及以上） */
+    /** 安装应用权限（特殊权限，需要 Android 8.0 及以上） */
     public static final String REQUEST_INSTALL_PACKAGES = "android.permission.REQUEST_INSTALL_PACKAGES";
 
-    /** 通知栏权限（特殊权限，需要 Android 7.0 及以上） */
+    /** 通知栏权限（特殊权限，需要 Android 6.0 及以上） */
     public static final String NOTIFICATION_SERVICE = "android.permission.ACCESS_NOTIFICATION_POLICY";
 
     /** 悬浮窗权限（特殊权限，需要 Android 6.0 及以上） */
@@ -31,7 +32,7 @@ public final class Permission {
     /**
      * 读取外部存储
      *
-     * @deprecated         在 Android 11 已经废弃，请直接使用 {@link Permission#MANAGE_EXTERNAL_STORAGE}
+     * @deprecated         在 Android 11 已经废弃，请使用 {@link Permission#MANAGE_EXTERNAL_STORAGE}
      */
     @Deprecated
     public static final String READ_EXTERNAL_STORAGE = "android.permission.READ_EXTERNAL_STORAGE";
@@ -39,7 +40,7 @@ public final class Permission {
     /**
      * 写入外部存储
      *
-     * @deprecated         在 Android 11 已经废弃，请直接使用 {@link Permission#MANAGE_EXTERNAL_STORAGE}
+     * @deprecated         在 Android 11 已经废弃，请使用 {@link Permission#MANAGE_EXTERNAL_STORAGE}
      */
     @Deprecated
     public static final String WRITE_EXTERNAL_STORAGE = "android.permission.WRITE_EXTERNAL_STORAGE";
@@ -111,8 +112,8 @@ public final class Permission {
     /** 接收彩信 */
     public static final String RECEIVE_MMS = "android.permission.RECEIVE_MMS";
 
-    ///** 允许呼叫应用继续在另一个应用中启动的呼叫（需要 Android 9.0 及以上，极其少见，所以不做适配） */
-    //public static final String ACCEPT_HANDOVER = "android.permission.ACCEPT_HANDOVER";
+    /** 允许呼叫应用继续在另一个应用中启动的呼叫（需要 Android 9.0 及以上） */
+    public static final String ACCEPT_HANDOVER = "android.permission.ACCEPT_HANDOVER";
 
     /**
      * 权限组

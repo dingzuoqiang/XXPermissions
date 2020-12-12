@@ -6,9 +6,10 @@ android {
 
     defaultConfig {
         minSdkVersion 11
+        // noinspection ExpiredTargetSdkVersion
         targetSdkVersion 23
-        versionCode 86
-        versionName "8.6"
+        versionCode 96
+        versionName "9.6"
     }
 
     lintOptions {
@@ -16,12 +17,17 @@ android {
     }
 }
 
+dependencies {
+    // noinspection GradleCompatible
+    implementation 'com.android.support:support-fragment:24.2.0'
+}
+
 publish {
     userOrg = 'getactivity'
     groupId = 'com.hjq'
     artifactId = 'xxpermissions'
-    version = '8.6'
-    description = 'Android 6.0 permissions adaptation framework'
+    publishVersion = '9.6'
+    desc = 'Android 6.0 permissions adaptation framework'
     website = "https://github.com/getActivity/XXPermissions"
 }
 

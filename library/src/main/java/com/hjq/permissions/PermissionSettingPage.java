@@ -27,33 +27,49 @@ final class PermissionSettingPage {
         if (PermissionUtils.containsSpecialPermission(deniedPermissions)) {
             // 如果当前只有一个权限被拒绝了
             if (deniedPermissions.size() == 1) {
+
                 String permission = deniedPermissions.get(0);
                 if (Permission.MANAGE_EXTERNAL_STORAGE.equals(permission)) {
                     return getStoragePermissionIntent(context);
-                } else if (Permission.REQUEST_INSTALL_PACKAGES.equals(permission)) {
-                    return getInstallPermissionIntent(context);
-                } else if (Permission.SYSTEM_ALERT_WINDOW.equals(permission)) {
-                    return getWindowPermissionIntent(context);
-                } else if (Permission.NOTIFICATION_SERVICE.equals(permission)) {
-                    return getNotifyPermissionIntent(context);
-                } else if (Permission.WRITE_SETTINGS.equals(permission)) {
-                    return getSettingPermissionIntent(context);
-                } else {
-                    return getApplicationDetailsIntent(context);
                 }
-            } else {
-                // 跳转到应用详情界面
-                return PermissionSettingPage.getApplicationDetailsIntent(context);
-            }
-        } else {
-            // 跳转到具体的权限设置界面
-            Intent intent = PermissionDetailsPage.getIntent(context);
 
-            if (intent == null) {
-                intent = PermissionSettingPage.getApplicationDetailsIntent(context);
+                if (Permission.REQUEST_INSTALL_PACKAGES.equals(permission)) {
+                    return getInstallPermissionIntent(context);
+                }
+
+                if (Permission.SYSTEM_ALERT_WINDOW.equals(permission)) {
+                    return getWindowPermissionIntent(context);
+                }
+
+                if (Permission.NOTIFICATION_SERVICE.equals(permission)) {
+                    return getNotifyPermissionIntent(context);
+                }
+
+                if (Permission.WRITE_SETTINGS.equals(permission)) {
+                    return getSettingPermissionIntent(context);
+                }
+
+                return getApplicationDetailsIntent(context);
             }
-            return intent;
+
+            if (deniedPermissions.size() == 3) {
+
+                if (deniedPermissions.contains(Permission.MANAGE_EXTERNAL_STORAGE) &&
+                        deniedPermissions.contains(Permission.READ_EXTERNAL_STORAGE) &&
+                        deniedPermissions.contains(Permission.WRITE_EXTERNAL_STORAGE)) {
+
+                    if (PermissionUtils.isAndroid11()) {
+                        return getStoragePermissionIntent(context);
+                    }
+
+                    return PermissionSettingPage.getApplicationDetailsIntent(context);
+                }
+            }
+
+            return PermissionSettingPage.getApplicationDetailsIntent(context);
         }
+
+        return PermissionSettingPage.getApplicationDetailsIntent(context);
     }
 
     /**
@@ -74,7 +90,7 @@ final class PermissionSettingPage {
             intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
             intent.setData(Uri.parse("package:" + context.getPackageName()));
         }
-        if (intent == null || !PermissionUtils.hasActivityIntent(context, intent)) {
+        if (intent == null || !PermissionUtils.areActivityIntent(context, intent)) {
             intent = getApplicationDetailsIntent(context);
         }
         return intent;
@@ -87,10 +103,15 @@ final class PermissionSettingPage {
         Intent intent = null;
         if (PermissionUtils.isAndroid6()) {
             intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-            intent.setData(Uri.parse("package:" + context.getPackageName()));
+            // 在 Android 11 上面不能加包名跳转，因为就算加了也没有效果
+            // 还有人反馈在 Android 11 的 TV 模拟器上会出现崩溃的情况
+            // https://developer.android.google.cn/reference/android/provider/Settings#ACTION_MANAGE_OVERLAY_PERMISSION
+            if (!PermissionUtils.isAndroid11()) {
+                intent.setData(Uri.parse("package:" + context.getPackageName()));
+            }
         }
 
-        if (intent == null || !PermissionUtils.hasActivityIntent(context, intent)) {
+        if (intent == null || !PermissionUtils.areActivityIntent(context, intent)) {
             intent = getApplicationDetailsIntent(context);
         }
         return intent;
@@ -106,7 +127,7 @@ final class PermissionSettingPage {
             intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
             //intent.putExtra(Settings.EXTRA_CHANNEL_ID, context.getApplicationInfo().uid);
         }
-        if (intent == null || !PermissionUtils.hasActivityIntent(context, intent)) {
+        if (intent == null || !PermissionUtils.areActivityIntent(context, intent)) {
             intent = getApplicationDetailsIntent(context);
         }
         return intent;
@@ -121,7 +142,7 @@ final class PermissionSettingPage {
             intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
             intent.setData(Uri.parse("package:" + context.getPackageName()));
         }
-        if (intent == null || !PermissionUtils.hasActivityIntent(context, intent)) {
+        if (intent == null || !PermissionUtils.areActivityIntent(context, intent)) {
             intent = getApplicationDetailsIntent(context);
         }
         return intent;
@@ -133,9 +154,10 @@ final class PermissionSettingPage {
     static Intent getStoragePermissionIntent(Context context) {
         Intent intent = null;
         if (PermissionUtils.isAndroid11()) {
-            intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+            intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+            intent.setData(Uri.parse("package:" + context.getPackageName()));
         }
-        if (intent == null || !PermissionUtils.hasActivityIntent(context, intent)) {
+        if (intent == null || !PermissionUtils.areActivityIntent(context, intent)) {
             intent = getApplicationDetailsIntent(context);
         }
         return intent;
